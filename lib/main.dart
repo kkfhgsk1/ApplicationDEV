@@ -113,33 +113,57 @@ class TaskCard extends StatelessWidget {
  
   @override 
   Widget build(BuildContext context) { 
+    final Color priorityColor = priority.toLowerCase() == 'high' ? Colors.red : Colors.green;
     return Card( 
       elevation: 2, 
       child: Padding( 
-        padding: const EdgeInsets.all(12), 
+        padding: const EdgeInsets.all(16), // Increased padding
         child: Row( 
           children: [ 
             Expanded( 
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [ 
-                Row( 
-                  children: [ 
-                    Expanded(child: Text(title, style: 
-Theme.of(context).textTheme.titleMedium)), 
-                    // small hint to show composition: IconLabel can be reused elsewhere 
-                    IconLabel(icon: Icons.calendar_today_rounded, label: 'Today'), 
-                  ], 
-                ), 
-                const SizedBox(height: 6), 
-                Text(description, maxLines: 2, overflow: TextOverflow.ellipsis), 
-                const SizedBox(height: 8), 
-                Row(children: [ 
-                  IconLabel(icon: Icons.comment, label: '2 comments'), 
-                  const SizedBox(width: 12), 
-                  IconLabel(icon: Icons.check_circle_outline, label: '0 done'), 
-                ]), 
-              ]), 
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start, 
+                children: [ 
+                  Row( 
+                    children: [ 
+                      Expanded(
+                        child: Text(
+                          title, 
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 18), // Larger font
+                        )
+                      ), 
+                      IconLabel(
+                        icon: Icons.access_time, 
+                        label: 'Due Today', 
+                        color: priorityColor,
+                      ), 
+                    ], 
+                  ), 
+                  const SizedBox(height: 8), 
+                  Text(
+                    description, 
+                    maxLines: 2, 
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 15),
+                  ), 
+                  const SizedBox(height: 10), 
+                  Row(children: [ 
+                    IconLabel(
+                      icon: Icons.person, 
+                      label: 'Unassigned', 
+                      color: Colors.grey[700],
+                    ), 
+                    const SizedBox(width: 16), 
+                    IconLabel(
+                      icon: Icons.check_circle_outline, 
+                      label: '0 done', 
+                      color: Colors.blueGrey,
+                    ), 
+                  ]), 
+                ]
+              ), 
             ), 
-            const SizedBox(width: 12), 
+            const SizedBox(width: 16), 
             _PriorityBadge(priority: priority), 
           ], 
         ), 
@@ -160,7 +184,7 @@ class _PriorityBadge extends StatelessWidget {
     return Container( 
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), 
       decoration: BoxDecoration(color: _color.withOpacity(0.12), borderRadius: 
-BorderRadius.circular(12)), 
+BorderRadius.circular(12)), r
       child: Text(priority, style: TextStyle(color: _color, fontWeight: 
 FontWeight.w600)), 
     ); 
@@ -173,16 +197,23 @@ FontWeight.w600)),
 class IconLabel extends StatelessWidget { 
   final IconData icon; 
   final String label; 
-  const IconLabel({super.key, required this.icon, required this.label}); 
+  final Color? color; // Optional color parameter
+  const IconLabel({super.key, required this.icon, required this.label, this.color}); 
  
   @override 
   Widget build(BuildContext context) { 
     return Row( 
       children: [ 
-        Icon(icon, size: 16), 
+        Icon(icon, size: 18, color: color), 
         const SizedBox(width: 6), 
-        Text(label, style: Theme.of(context).textTheme.bodyMedium), 
+        Text(
+          label, 
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: color,
+            fontSize: 14,
+          ),
+        ), 
       ], 
     ); 
-} 
-} 
+  } 
+}
