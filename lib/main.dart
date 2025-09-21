@@ -101,38 +101,90 @@ class TaskListPage extends StatelessWidget {
     ); 
   } 
  
-  void _openAddModal(BuildContext context) { 
-    showModalBottomSheet( 
-      context: context, 
-      isScrollControlled: true, 
-      builder: (_) { 
-        return Padding( 
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom), 
-          child: Padding( 
-            padding: const EdgeInsets.all(16), 
-            child: Column( 
-              mainAxisSize: MainAxisSize.min, 
-              children: [ 
-                Text('Add Task', style: Theme.of(context).textTheme.titleLarge), 
-                const SizedBox(height: 12), 
-                const TextField(decoration: InputDecoration(labelText: 'Title')), 
-                const SizedBox(height: 8), 
-                const TextField(maxLines: 2, decoration: InputDecoration(labelText: 
-'Description')), 
-                const SizedBox(height: 12), 
-                Row( 
-                  children: [ 
-                    Expanded(child: ElevatedButton(onPressed: () => 
-Navigator.pop(context), child: const Text('Create (UI only)'))), 
-                  ], 
-                ), 
-                const SizedBox(height: 8), 
-              ], 
-            ), 
-          ), 
-        ); 
-      }, 
-    ); 
+  void _openAddModal(BuildContext context) {
+    final titleController = TextEditingController(text: 'Weekly sync notes');
+    final descController = TextEditingController(text: 'Discuss project updates and blockers.');
+    String selectedPriority = 'Medium';
+    final priorities = ['High', 'Medium', 'Low'];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).colorScheme.background,
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 28,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: StatefulBuilder(
+            builder: (context, setState) => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Create New Task',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 22,
+                      ),
+                ),
+                const SizedBox(height: 18),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Title'),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: descController,
+                  maxLines: 2,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('Priority:'),
+                    const SizedBox(width: 12),
+                    DropdownButton<String>(
+                      value: selectedPriority,
+                      items: priorities
+                          .map((p) => DropdownMenuItem(
+                                value: p,
+                                child: Text(p),
+                              ))
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) setState(() => selectedPriority = val);
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('(UI-only) Task created')),
+                          );
+                        },
+                        child: const Text('Create (UI only)'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   } 
 } 
  
