@@ -1,5 +1,7 @@
 // main.dart 
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
+import 'widgets/task_card.dart';
+import 'widgets/icon_label.dart';
  
 void main() => runApp(const TaskApp()); 
  
@@ -40,66 +42,84 @@ class TaskApp extends StatelessWidget {
   } 
 } 
  
-class TaskListPage extends StatelessWidget { 
-  const TaskListPage({super.key}); 
- 
-  static final _demoTasks = [ 
-    { 
-      'title': 'Write unit tests', 
-      'description': 'Cover TaskCard widget and interactive behavior.', 
-      'priority': 'High', 
+class TaskListPage extends StatelessWidget {
+  const TaskListPage({super.key});
+
+  static final _demoTasks = [
+    {
+      'title': 'Code review for PR #42',
+      'description': 'Review the new authentication flow and leave comments.',
+      'priority': 'High',
       'dueDate': 'Today',
-      'assignee': 'Alice',
-      'tags': 'Testing,Backend',
+      'assignee': 'Ivonne',
+      'tags': 'Review,Auth',
       'isImportant': 'true',
-    }, 
-    { 
-      'title': 'Refactor auth', 
-      'description': 'Move logic into a reusable AuthService and clean up UI.', 
-      'priority': 'Low', 
+    },
+    {
+      'title': 'Write project documentation',
+      'description': 'Update README and add API usage examples.',
+      'priority': 'Medium',
       'dueDate': 'Tomorrow',
-      'assignee': 'Bob',
-      'tags': 'Refactor',
+      'assignee': 'Jurmader',
+      'tags': 'Docs,API',
       'isImportant': 'false',
-    }, 
-    { 
-      'title': 'Design review', 
-      'description': 'Prepare slides for Friday review with product.', 
-      'priority': 'High', 
+    },
+    {
+      'title': 'Team standup',
+      'description': 'Daily sync with the team to discuss progress and blockers.',
+      'priority': 'Low',
+      'dueDate': 'Everyday',
+      'assignee': 'Team PRX',
+      'tags': 'Meeting,Daily',
+      'isImportant': 'false',
+    },
+    {
+      'title': 'Deploy to staging',
+      'description': 'Push the latest build to the staging environment for QA.',
+      'priority': 'High',
       'dueDate': 'Friday',
-      'assignee': 'Unassigned',
-      'tags': 'Design,Slides',
+      'assignee': 'Hweilover9000',
+      'tags': 'Deploy,QA',
       'isImportant': 'true',
-    }, 
-  ]; 
- 
-  @override 
-  Widget build(BuildContext context) { 
-    return Scaffold( 
-      appBar: AppBar(title: const Text('Tasks')), 
-      body: ListView.separated( 
-        padding: const EdgeInsets.all(12), 
-        itemCount: _demoTasks.length, 
-        separatorBuilder: (_, __) => const SizedBox(height: 8), 
-        itemBuilder: (context, i) { 
-          final t = _demoTasks[i]; 
-          return TaskCard( 
-            title: t['title']!, 
-            description: t['description']!, 
-            priority: t['priority']!, 
+    },
+    {
+      'title': 'Update dependencies',
+      'description': 'Run pub upgrade and test for breaking changes.',
+      'priority': 'Medium',
+      'dueDate': 'Next week',
+      'assignee': 'liadan',
+      'tags': 'Maintenance',
+      'isImportant': 'false',
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Tasks')),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(12),
+        itemCount: _demoTasks.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        itemBuilder: (context, i) {
+          final t = _demoTasks[i];
+          return TaskCard(
+            title: t['title']!,
+            description: t['description']!,
+            priority: t['priority']!,
             dueDate: t['dueDate']!,
             assignee: t['assignee']!,
             tags: t['tags']!,
             isImportant: t['isImportant']!,
-          ); 
-        }, 
-      ), 
-      floatingActionButton: FloatingActionButton( 
-        onPressed: () => _openAddModal(context), 
-        child: const Icon(Icons.add), 
-      ), 
-    ); 
-  } 
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _openAddModal(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
  
   void _openAddModal(BuildContext context) {
     final titleController = TextEditingController(text: 'Weekly sync notes');
@@ -188,155 +208,4 @@ class TaskListPage extends StatelessWidget {
   } 
 } 
  
-/// --------------------------- 
-/// Widget: TaskCard (Stateless) 
-/// --------------------------- 
-/// You can extract this to its own file: widgets/task_card.dart 
-class TaskCard extends StatelessWidget { 
-  final String title; 
-  final String description; 
-  final String priority; 
-  final String dueDate;
-  final String assignee;
-  final String tags;
-  final String isImportant;
-
-  const TaskCard({ 
-    super.key, 
-    required this.title, 
-    required this.description, 
-    required this.priority, 
-    required this.dueDate,
-    required this.assignee,
-    required this.tags,
-    required this.isImportant,
-  }); 
- 
-  @override 
-  Widget build(BuildContext context) { 
-    final Color priorityColor = priority.toLowerCase() == 'high' ? const Color.fromARGB(255, 180, 80, 122) : const Color.fromARGB(255, 53, 148, 81);
-    final List<String> tagList = tags.isNotEmpty ? tags.split(',') : [];
-    final bool important = isImportant.toLowerCase() == 'true';
-    return Card( 
-      elevation: important ? 6 : 2, 
-      child: Padding( 
-        padding: const EdgeInsets.all(16), 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                if (important)
-                  const Icon(Icons.spa, color: Color.fromARGB(255, 109, 88, 110), size: 22), // Lotus icon, pastel purple
-                const Spacer(),
-                _PriorityBadge(priority: priority),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                IconLabel(
-                  icon: Icons.access_time,
-                  label: dueDate,
-                  color: priorityColor,
-                ),
-                const SizedBox(width: 16),
-                IconLabel(
-                  icon: Icons.person,
-                  label: assignee,
-                  color: priorityColor,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            if (tagList.isNotEmpty)
-              Wrap(
-                spacing: 6,
-                children: tagList.map((tag) => Chip(
-                  label: Text(tag, style: const TextStyle(fontSize: 12)),
-                  backgroundColor: priorityColor.withOpacity(0.08),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                )).toList(),
-              ),
-            if (tagList.isNotEmpty) const SizedBox(height: 8),
-            Text(
-              description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 15),
-            ),
-          ],
-        ),
-      ),
-    ); 
-  } 
-} 
- 
-/// Small private sub-widget (extractable) 
-class _PriorityBadge extends StatelessWidget { 
-  final String priority; 
-  const _PriorityBadge({super.key, required this.priority}); 
- 
-  Color get _color => priority.toLowerCase() == 'high'
-      ? const Color.fromARGB(255, 112, 55, 88) // Darker orange
-      : priority.toLowerCase() == 'low'
-          ? const Color(0xFF00695C) // Darker teal
-          : const Color(0xFF4527A0); // Darker purple
-
-  @override 
-  Widget build(BuildContext context) { 
-    return Chip(
-      label: Text(
-        priority,
-        style: TextStyle(
-          color: _color,
-          fontWeight: FontWeight.w600,
-          fontSize: 13,
-        ),
-      ),
-      backgroundColor: _color.withOpacity(0.18),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      side: BorderSide.none,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-    );
-  } 
-} 
- 
-/// --------------------------- 
-/// Reusable IconLabel widget 
-/// --------------------------- 
-class IconLabel extends StatelessWidget { 
-  final IconData icon; 
-  final String label; 
-  final Color? color; // Optional color parameter
-  const IconLabel({super.key, required this.icon, required this.label, this.color}); 
- 
-  @override 
-  Widget build(BuildContext context) { 
-    return Row( 
-      children: [ 
-        Icon(icon, size: 18, color: color), 
-        const SizedBox(width: 6), 
-        Text(
-          label, 
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: color,
-            fontSize: 14,
-          ),
-        ), 
-      ], 
-    ); 
-  } 
-}
+// ...existing code...
